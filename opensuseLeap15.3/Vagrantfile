@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "opensuse/Leap-15.3.x86_64"
+
+
+  config.vm.hostname = "k3s-node1"
+
+
+  config.vm.network "private_network", ip: "192.168.34.10"
+
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = 1
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    zypper update
+    # not necessary but useful to find zypper packages providing missing commands
+    zypper --non-interactive in command-not-found
+    zypper --non-interactive in curl
+  SHELL
+end
